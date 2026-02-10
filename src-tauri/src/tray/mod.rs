@@ -4,6 +4,7 @@ use tauri::{
     tray::{TrayIcon, TrayIconBuilder},
     AppHandle, Emitter, Manager, Runtime,
 };
+use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 /// Tray icon states matching the app lifecycle.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -56,7 +57,14 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
                 }
                 "about" => {
                     let version = env!("CARGO_PKG_VERSION");
-                    let _ = app.emit("tray://about", version);
+                    app.dialog()
+                        .message(format!(
+                            "Dictation v{}\n\nLocal voice-to-text dictation.\nAll speech processing happens on your device.",
+                            version
+                        ))
+                        .title("About Dictation")
+                        .kind(MessageDialogKind::Info)
+                        .blocking_show();
                 }
                 "quit" => {
                     app.exit(0);

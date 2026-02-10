@@ -70,6 +70,7 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
         ))
+        .plugin(tauri_plugin_dialog::init())
         // updater plugin requires signing keys — enable when release infrastructure is ready
         // .plugin(tauri_plugin_updater::Builder::new().build())
         // --- Managed state ---
