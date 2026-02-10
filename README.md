@@ -1,288 +1,208 @@
-# AI Tools
+# Dictation
 
-A collection of AI prompt templates for structured software development, content creation, and design workflows. These prompts guide AI assistants through a systematic **Research → Create → Generate → Execute** process.
+A desktop voice-to-text app that runs entirely on your machine. Press a hotkey, speak, and your words are transcribed and injected into whatever application has focus — Notepad, VS Code, Slack, your browser, anything.
 
-## Overview
+Built with [Tauri v2](https://v2.tauri.app/) (Rust backend) and React/TypeScript (frontend).
 
-This toolkit helps you break down complex projects into manageable pieces by:
-
-1. **Researching** the landscape (codebase, best practices, constraints) before writing requirements
-2. **Creating** detailed requirement documents (PRD, CRD, or DRD) informed by research
-3. **Generating** actionable task lists from those requirements
-4. **Executing** tasks one-by-one with built-in checkpoints
-
-All outputs are saved to a `/tasks` directory for tracking and reference.
-
-## Workflow
+## How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        RESEARCH PHASE                           │
-│  Gather context before writing requirements:                    │
-│  • Internal: codebase, existing docs, patterns, constraints     │
-│  • External: best practices, reference implementations          │
-│  • Output: Research Summary Document (RSD)                      │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                         CREATE PHASE                            │
-│  Choose the appropriate requirements document:                  │
-│  • PRD (Product) - Features & functionality                     │
-│  • CRD (Content) - Copy, messaging, articles                    │
-│  • DRD (Design)  - UI, visuals, components                      │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                        GENERATE PHASE                           │
-│  Convert requirements into a structured task list               │
-│  • Parent tasks with sub-tasks                                  │
-│  • Relevant files identified                                    │
-│  • Checkboxes for progress tracking                             │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                        EXECUTE PHASE                            │
-│  Work through tasks systematically                              │
-│  • One sub-task at a time                                       │
-│  • User approval between steps                                  │
-│  • Auto-commit on parent task completion                        │
-└─────────────────────────────────────────────────────────────────┘
+Hotkey → Mic Capture → Whisper STT → Text Cleanup → Paste into Active App
 ```
 
-## Prompt Files
+1. Press the hotkey (default: **F9**) to start recording
+2. Speak naturally
+3. Press the hotkey again to stop
+4. Your speech is transcribed locally via [Whisper](https://github.com/ggerganov/whisper.cpp), cleaned up, and pasted into the focused application
 
-| File | Purpose | Output |
-|------|---------|--------|
-| `research.md` | Research Summary Document | `tasks/rsd-[project-name]-[version].md` |
-| `create-prd.md` | Product Requirements Document | `tasks/prd-[feature-name]-[version].md` |
-| `create-crd.md` | Content Requirements Document | `tasks/crd-[content-name]-[version].md` |
-| `create-drd.md` | Design Requirements Document | `tasks/drd-[design-name]-[version].md` |
-| `generate-tasks.md` | Task list generation | `tasks/tasks-[feature-name].md` |
-| `execute-tasks.md` | Task execution guidelines | Updates the task list in place |
+All speech processing happens **locally on your device**. No audio is sent to any server. Cloud LLM cleanup (optional) sends only the transcribed text.
 
-## Usage
+## Features
 
-### Step 0: Research (Recommended First Step)
+- **Local-first STT** — Whisper models run on-device via whisper.cpp (CPU or GPU)
+- **Voice Activity Detection** — Silero VAD filters silence and auto-stops after 10s
+- **Three-tier text cleanup** — Rule-based (always available), local LLM, or cloud LLM (OpenAI / Anthropic)
+- **Clipboard injection** — Pastes via Ctrl+V for universal app compatibility, with keyboard simulation fallback
+- **Floating pill UI** — Transparent overlay shows recording state, waveform, and processing status
+- **System tray** — Lives in your taskbar with settings, pause/resume, and quit
+- **Configurable hotkey** — Toggle or hold-to-record modes
+- **No telemetry** — Zero analytics, crash reporting, or tracking of any kind
 
-Before writing requirements, use `research.md` to gather context about your project. This ensures your requirements are grounded in reality—existing patterns, technical constraints, and best practices.
+## Prerequisites
 
-**Example:**
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [Node.js](https://nodejs.org/) | 18+ | Frontend build |
+| [Rust](https://rustup.rs/) | 1.70+ | Backend compilation |
+| [LLVM/Clang](https://releases.llvm.org/) | 15+ | Required by whisper-rs (bindgen) |
+| [CMake](https://cmake.org/download/) | 3.20+ | Required by whisper-rs (builds whisper.cpp) |
+| [VS Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) | 2022 | MSVC compiler (Windows) |
 
-NOTE: Most AI tools allow you to directly reference your file with the "@" preface. But, if not, you can paste in the contents as stated below.
+### Windows Quick Install
 
-```
-[Paste contents of research.md]
+```powershell
+# Rust
+winget install Rustlang.Rustup
 
-I want to add a user authentication system with email/password login and OAuth support.
-```
+# LLVM + CMake
+winget install LLVM.LLVM
+winget install Kitware.CMake
 
-The AI will:
-1. Ask 4-7 clarifying questions about research scope, depth, and focus
-2. Analyze internal codebase for existing patterns, constraints, and reusable components
-3. Research external best practices, reference implementations, and standards
-4. Generate a Research Summary Document (RSD)
-5. Save it to `/tasks/rsd-user-auth-v1.md`
-
-The RSD includes:
-- Existing context and assets in your codebase
-- Best practices and reference implementations
-- Constraints, risks, and dependencies
-- Recommendations for which requirements doc to create next
-
-### Step 1: Create a Requirements Document
-
-Copy the contents of the appropriate `create-*.md` file into your AI assistant, then describe what you want to build. Reference your RSD if you completed the research phase.
-
-**Example - Creating a PRD:**
-
-```
-[Paste contents of create-prd.md]
-
-Based on the research in tasks/rsd-user-auth-v1.md, I want to add a user authentication system with email/password login and OAuth support.
+# VS Build Tools (if not already installed)
+winget install Microsoft.VisualStudio.2022.BuildTools
 ```
 
-The AI will:
-1. Ask 3-5 clarifying questions with multiple-choice options
-2. Generate a detailed requirements document
-3. Save it to `/tasks/prd-user-auth-v1.md`
+## Getting Started
 
-**Example - Creating a CRD:**
+### 1. Clone and install
 
-```
-[Paste contents of create-crd.md]
-
-I need onboarding email copy for new users who sign up for our SaaS product.
+```bash
+git clone https://github.com/jasona/dictation.git
+cd dictation
+npm install
 ```
 
-**Example - Creating a DRD:**
+### 2. Set environment variables
 
-```
-[Paste contents of create-drd.md]
-
-Design a settings page with toggles for notifications, theme preferences, and account management.
-```
-
-### Step 2: Generate Tasks
-
-Once you have a requirements document, use `generate-tasks.md` to create an actionable task list.
-
-**Example:**
-
-```
-[Paste contents of generate-tasks.md]
-
-Generate tasks based on: tasks/prd-user-auth-v1.md
+**PowerShell:**
+```powershell
+$env:LIBCLANG_PATH = "C:\Program Files\LLVM\bin"
+$env:CARGO_TARGET_DIR = "C:\Users\<you>\.cargo-targets\dictation"  # optional, avoids cloud sync lock issues
 ```
 
-The AI will:
-1. Analyze the requirements document
-2. Generate high-level parent tasks (including "Create feature branch")
-3. Wait for your approval ("Go")
-4. Break down each parent into detailed sub-tasks
-5. Identify relevant files to create/modify
-6. Save to `/tasks/tasks-user-auth.md`
-
-**Sample output structure:**
-
-```markdown
-## Tasks
-
-- [ ] 0.0 Create feature branch
-  - [ ] 0.1 Create and checkout `feature/user-auth`
-- [ ] 1.0 Set up authentication database schema
-  - [ ] 1.1 Create users table migration
-  - [ ] 1.2 Add email and password_hash columns
-  - [ ] 1.3 Create sessions table migration
-- [ ] 2.0 Implement email/password authentication
-  - [ ] 2.1 Create signup endpoint
-  - [ ] 2.2 Create login endpoint
-  - [ ] 2.3 Add password hashing utility
-...
+**Bash / Git Bash:**
+```bash
+export LIBCLANG_PATH="C:/Program Files/LLVM/bin"
+export CARGO_TARGET_DIR="C:/Users/<you>/.cargo-targets/dictation"  # optional
 ```
 
-### Step 3: Execute Tasks
+`LIBCLANG_PATH` is required for whisper-rs compilation. `CARGO_TARGET_DIR` is only needed if your project lives in a synced folder (Dropbox, OneDrive) to avoid file-lock errors.
 
-Use `execute-tasks.md` to work through the task list systematically.
+### 3. Run in development
 
-**Example:**
-
-```
-[Paste contents of execute-tasks.md]
-
-Execute the tasks in: tasks/tasks-user-auth.md
+```powershell
+npm run tauri dev
 ```
 
-The AI will:
-1. Read the task list and find the next uncompleted sub-task
-2. Implement that sub-task
-3. Mark it complete (`[x]`)
-4. **Stop and wait for your approval** before continuing
-5. Commit and push when a parent task is fully complete
+The first build takes several minutes (compiling whisper.cpp, ONNX Runtime, etc.). Subsequent builds are incremental and much faster.
 
-**Interaction flow:**
+### 4. First launch
 
-```
-AI: I've completed sub-task 1.1 (Create users table migration).
-    Ready for the next sub-task?
+On first launch, the onboarding wizard walks you through:
 
-You: y
+1. **Microphone permission** — Grant access to your mic
+2. **Hotkey setup** — Choose your activation shortcut
+3. **Model download** — The `base.en` Whisper model (~150 MB) is downloaded automatically
+4. **Test dictation** — Try speaking to verify everything works
 
-AI: Working on sub-task 1.2 (Add email and password_hash columns)...
-```
+After onboarding, the app lives in your **system tray**. Right-click the tray icon for Settings, Pause, or Quit.
 
-## Corporate Standards (Team Scaling)
+## Configuration
 
-The `/standards/` directory contains organizational standards that ensure consistency across team members. When rolling this out to a team:
+### Hotkey
 
-### Standards Structure
+Open **Settings** from the tray icon. Click the hotkey field and press your desired key combination. Modifier keys (Ctrl, Alt, Shift) are recommended to avoid conflicts.
 
-```
-standards/
-├── standards-manifest.yml    # Central config + version
-├── README.md                 # How to use standards
-├── global/                   # Apply to ALL phases
-│   ├── principles.md         # Core values
-│   ├── security-privacy.md   # Security rules
-│   ├── accessibility.md      # A11y requirements
-│   └── terminology.md        # Approved terms
-├── domains/                  # Domain-specific
-│   ├── code-architecture.md  # Code standards
-│   ├── content-voice.md      # Voice/tone
-│   └── design-ui.md          # Design system
-├── phases/                   # Phase-specific
-│   └── [phase].md            # Per-phase rules
-└── teams/                    # Team overlays
-    └── [team].md             # Team-specific
-```
+**Activation modes:**
+- **Toggle** (default) — Press once to start, press again to stop
+- **Hold** — Hold the key to record, release to stop
 
-### How Standards Work
+### Whisper Models
 
-1. **Each prompt file references applicable standards** from `/standards/`
-2. **AI outputs include compliance info** (version, applied rules, deviations)
-3. **Teams customize** by editing standard files or adding team overlays
-4. **Version control** tracks changes centrally
+Available models (downloaded on demand from Hugging Face):
 
-### Getting Started with Standards
+| Model | Size | Speed | Accuracy |
+|-------|------|-------|----------|
+| `tiny.en` | ~75 MB | Fastest | Lower |
+| `base.en` | ~150 MB | Fast | Good (default) |
+| `small.en` | ~500 MB | Moderate | Better |
+| `medium.en` | ~1.5 GB | Slow | Best |
 
-1. **Review and customize** `/standards/global/` for your organization
-2. **Update domain standards** in `/standards/domains/` for your tech stack and brand
-3. **Distribute** the entire repo to your team
-4. **Update centrally** and pull changes to keep everyone aligned
+Manage models in **Settings > Transcription**. English-only (`.en`) models are faster and more accurate for English speech.
 
-See `/standards/README.md` for detailed setup instructions.
+### GPU Acceleration
 
-## Quick Reference
+GPU backends can be enabled at build time:
 
-| What you want to do | Use this file |
-|---------------------|---------------|
-| Research before requirements | `research.md` |
-| Plan a new feature | `create-prd.md` |
-| Plan content/copy | `create-crd.md` |
-| Plan a design | `create-drd.md` |
-| Break requirements into tasks | `generate-tasks.md` |
-| Execute tasks step-by-step | `execute-tasks.md` |
-| Customize team standards | `/standards/` directory |
+```powershell
+# CUDA (NVIDIA GPUs)
+$env:CARGO_FEATURES = "cuda"
 
-## Directory Structure
-
-```
-ai-tools/
-├── README.md
-├── research.md          # Research summary template (Step 0)
-├── create-prd.md        # Product requirements template
-├── create-crd.md        # Content requirements template
-├── create-drd.md        # Design requirements template
-├── generate-tasks.md    # Task generation rules
-├── execute-tasks.md     # Task execution rules
-├── standards/           # Corporate standards (for teams)
-│   ├── standards-manifest.yml
-│   ├── README.md
-│   ├── global/          # Global standards
-│   ├── domains/         # Domain-specific standards
-│   ├── phases/          # Phase-specific standards
-│   └── teams/           # Team overlays
-└── tasks/               # Output directory (created automatically)
-    ├── rsd-*.md         # Research summary docs
-    ├── prd-*.md         # Product requirement docs
-    ├── crd-*.md         # Content requirement docs
-    ├── drd-*.md         # Design requirement docs
-    └── tasks-*.md       # Generated task lists
+# Vulkan (AMD / NVIDIA / Intel)
+$env:CARGO_FEATURES = "vulkan"
 ```
 
-## Tips
+Select the active backend in **Settings > Transcription > GPU Backend**.
 
-- **Start with research**: The Research phase surfaces constraints and patterns early, leading to better requirements
-- **Customize your standards**: Edit `/standards/` files to match your organization's conventions before team rollout
-- **Version your documents**: All docs are versioned (`-v1`, `-v2`) so you can iterate without losing history
-- **Don't skip the clarifying questions**: They help produce more accurate research and requirements
-- **Review parent tasks before proceeding**: Say "Go" only when the high-level plan looks right
-- **Take your time during execution**: The pause-and-approve pattern prevents runaway changes
-- **Keep the task file updated**: It serves as documentation of what was done
-- **Document deviations**: When you must deviate from standards, document why in your PR
+### Text Cleanup Tiers
 
-## Credits
+| Tier | Description | Requires |
+|------|-------------|----------|
+| **Rule-based** | Removes filler words (um, uh, you know), fixes capitalization, normalizes whitespace | Nothing (always available) |
+| **Cloud LLM** | OpenAI (`gpt-4o-mini`) or Anthropic (`claude-haiku`) polishes grammar and phrasing | API key |
+| **Local LLM** | On-device LLM cleanup via llama.cpp | `local-llm` feature flag + model download |
 
-Huge credits to Ryan Carson (ryancarson.com) who did most of this foundational work, and his demo on the "How I AI" podcast for lighting me on fire for this stuff.
+Configure in **Settings > Cleanup**. Cloud and local LLM tiers automatically fall back to rule-based if they fail.
+
+### Audio Device
+
+By default, the system default microphone is used. Select a specific device in **Settings > Audio**.
+
+## Building for Production
+
+```powershell
+$env:LIBCLANG_PATH = "C:\Program Files\LLVM\bin"
+npm run tauri build
+```
+
+This produces an NSIS installer in `src-tauri/target/release/bundle/nsis/`.
+
+## Architecture
+
+```
+src-tauri/src/
+├── main.rs              # Entry point
+├── lib.rs               # Plugin registration, state management, app setup
+├── pipeline.rs          # Orchestrator: hotkey → audio → STT → cleanup → inject
+├── hotkey/              # Global shortcut registration, toggle/hold modes
+├── audio/               # Mic capture (cpal), VAD (Silero via ONNX Runtime)
+├── stt/                 # Whisper integration, model management
+├── cleanup/             # Rule-based, cloud LLM, local LLM text cleanup
+├── injection/           # Clipboard paste (arboard) + keyboard fallback (enigo)
+├── tray/                # System tray icon and context menu
+└── settings/            # Persistent settings store
+
+src/
+├── App.tsx              # Window router (pill, settings, onboarding)
+├── components/
+│   ├── pill/            # Floating overlay (waveform, glow, state machine)
+│   ├── settings/        # Settings UI sections
+│   ├── onboarding/      # 5-step first-run wizard
+│   └── ui/              # shadcn/ui components
+└── hooks/
+    └── useSettings.ts   # Settings state management
+```
+
+## Key Dependencies
+
+| Crate | Purpose |
+|-------|---------|
+| `whisper-rs` | Whisper.cpp bindings for speech-to-text |
+| `cpal` | Cross-platform audio capture |
+| `ort` | ONNX Runtime for Silero VAD |
+| `arboard` | Clipboard read/write |
+| `enigo` | Keyboard/mouse simulation |
+| `keyring` | OS credential storage for API keys |
+| `reqwest` | HTTP client for model downloads and cloud APIs |
+
+## Privacy
+
+- All speech-to-text processing runs locally via Whisper
+- No audio is ever transmitted to any server
+- Cloud LLM cleanup (when enabled) sends only transcribed text to OpenAI or Anthropic
+- API keys are stored in the OS credential manager (Windows Credential Store)
+- No analytics, telemetry, or crash reporting is included
+- The auto-updater (when configured) checks for versions only — no user data is sent
 
 ## License
 
