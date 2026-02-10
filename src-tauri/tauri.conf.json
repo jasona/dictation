@@ -30,7 +30,8 @@
         "skipTaskbar": true,
         "resizable": false,
         "visible": false,
-        "center": true
+        "center": true,
+        "focus": false
       },
       {
         "label": "settings",
