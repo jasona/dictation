@@ -1,4 +1,5 @@
 use tauri::{
+    image::Image,
     menu::{Menu, MenuItem},
     tray::{TrayIcon, TrayIconBuilder},
     AppHandle, Emitter, Manager, Runtime,
@@ -34,7 +35,11 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
         &[&settings_item, &pause_item, &about_item, &quit_item],
     )?;
 
+    let icon = Image::from_bytes(include_bytes!("../../icons/icon.png"))
+        .expect("Failed to load tray icon");
+
     let tray = TrayIconBuilder::with_id("dictation-tray")
+        .icon(icon)
         .tooltip(tooltip_for_state(TrayState::Idle))
         .menu(&menu)
         .show_menu_on_left_click(false)
