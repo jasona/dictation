@@ -5,7 +5,7 @@ use std::time::Instant;
 use tauri::{AppHandle, Emitter, Manager, Runtime};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
-/// Activation mode for dictation.
+/// Activation mode for recording.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ActivationMode {
@@ -17,7 +17,7 @@ pub enum ActivationMode {
 pub struct HotkeyState {
     /// Whether recording is currently active.
     pub is_recording: AtomicBool,
-    /// Whether dictation is paused (tray pause/resume).
+    /// Whether recording is paused (tray pause/resume).
     pub is_paused: AtomicBool,
     /// Current activation mode.
     pub mode: Mutex<ActivationMode>,
@@ -117,15 +117,15 @@ fn handle_toggle<R: Runtime>(
 
     if was_recording {
         // Stop recording → trigger processing
-        log::info!("Hotkey: stopping recording, emitting dictation://stop");
+        log::info!("Hotkey: stopping recording, emitting vozr://stop");
         state.is_recording.store(false, Ordering::Relaxed);
-        let _ = app.emit("dictation://stop", ());
+        let _ = app.emit("vozr://stop", ());
         crate::tray::set_state(app, crate::tray::TrayState::Processing);
     } else {
         // Start recording
-        log::info!("Hotkey: starting recording, emitting dictation://start");
+        log::info!("Hotkey: starting recording, emitting vozr://start");
         state.is_recording.store(true, Ordering::Relaxed);
-        let _ = app.emit("dictation://start", ());
+        let _ = app.emit("vozr://start", ());
         crate::tray::set_state(app, crate::tray::TrayState::Listening);
     }
 }
@@ -143,7 +143,7 @@ fn handle_hold<R: Runtime>(
 
             if !state.is_recording.load(Ordering::Relaxed) {
                 state.is_recording.store(true, Ordering::Relaxed);
-                let _ = app.emit("dictation://start", ());
+                let _ = app.emit("vozr://start", ());
                 crate::tray::set_state(app, crate::tray::TrayState::Listening);
             }
         }
@@ -155,7 +155,7 @@ fn handle_hold<R: Runtime>(
 
             if state.is_recording.load(Ordering::Relaxed) && held_long_enough {
                 state.is_recording.store(false, Ordering::Relaxed);
-                let _ = app.emit("dictation://stop", ());
+                let _ = app.emit("vozr://stop", ());
                 crate::tray::set_state(app, crate::tray::TrayState::Processing);
             }
         }

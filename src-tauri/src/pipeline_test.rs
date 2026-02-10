@@ -1,4 +1,4 @@
-// Integration tests for the dictation pipeline.
+// Integration tests for the Vozr pipeline.
 //
 // These tests verify the pipeline orchestrator logic. Tests that require
 // real hardware (microphone, keyboard/clipboard injection) are marked #[ignore].
@@ -65,11 +65,11 @@ mod tests {
         assert!(result.is_err(), "Expected error when no model is loaded");
     }
 
-    /// Integration test: full dictation flow end-to-end.
+    /// Integration test: full Vozr flow end-to-end.
     /// Requires microphone, Whisper model, and a foreground text field.
     #[test]
     #[ignore]
-    fn full_dictation_flow() {
+    fn full_vozr_flow() {
         // This test requires:
         // 1. A working microphone
         // 2. A downloaded Whisper model (base.en)

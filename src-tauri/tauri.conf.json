@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Dictation",
+  "productName": "Vozr",
   "version": "0.1.0",
-  "identifier": "com.jason.dictation",
+  "identifier": "com.jason.vozr",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Dictation",
+        "title": "Vozr",
         "visible": false,
         "width": 800,
         "height": 600
@@ -34,7 +34,7 @@
       },
       {
         "label": "settings",
-        "title": "Dictation Settings",
+        "title": "Vozr Settings",
         "url": "/settings",
         "width": 480,
         "height": 640,
@@ -44,7 +44,7 @@
       },
       {
         "label": "onboarding",
-        "title": "Welcome to Dictation",
+        "title": "Welcome to Vozr",
         "url": "/onboarding",
         "width": 520,
         "height": 600,

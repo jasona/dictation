@@ -10,5 +10,5 @@
 // not report any user data. This is a deliberate design decision.
 
 fn main() {
-    dictation_app_lib::run()
+    vozr_lib::run()
 }

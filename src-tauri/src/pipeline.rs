@@ -1,6 +1,6 @@
-// End-to-end dictation pipeline orchestrator.
+// End-to-end Vozr pipeline orchestrator.
 //
-// Listens for dictation://start and dictation://stop events emitted by the hotkey module,
+// Listens for vozr://start and vozr://stop events emitted by the hotkey module,
 // then runs the pipeline: audio capture → STT → cleanup → text injection.
 // Emits pill events (pill://success, pill://error) and updates the tray state.
 
@@ -22,28 +22,28 @@ pub fn init<R: Runtime>(app: &AppHandle<R>) {
     let recording_for_start = recording.clone();
     let recording_for_stop = recording.clone();
 
-    // Listen for dictation://start — begin audio capture
+    // Listen for vozr://start — begin audio capture
     let start_handle = handle.clone();
-    app.listen("dictation://start", move |_event| {
+    app.listen("vozr://start", move |_event| {
         if recording_for_start.swap(true, Ordering::SeqCst) {
             // Already recording, ignore duplicate start
             return;
         }
-        on_dictation_start(&start_handle);
+        on_vozr_start(&start_handle);
     });
 
-    // Listen for dictation://stop — process the captured audio
-    app.listen("dictation://stop", move |_event| {
+    // Listen for vozr://stop — process the captured audio
+    app.listen("vozr://stop", move |_event| {
         if !recording_for_stop.swap(false, Ordering::SeqCst) {
             // Wasn't recording, ignore stale stop
             return;
         }
-        on_dictation_stop(&handle);
+        on_vozr_stop(&handle);
     });
 }
 
-/// Called when dictation starts: show pill, begin audio capture.
-fn on_dictation_start<R: Runtime>(app: &AppHandle<R>) {
+/// Called when recording starts: show pill, begin audio capture.
+fn on_vozr_start<R: Runtime>(app: &AppHandle<R>) {
     // Show the pill window in recording state (don't steal focus from the target app)
     if let Some(win) = app.get_webview_window("pill") {
         let _ = win.show();
@@ -58,8 +58,8 @@ fn on_dictation_start<R: Runtime>(app: &AppHandle<R>) {
     }
 }
 
-/// Called when dictation stops: stop audio, run STT → cleanup → inject.
-fn on_dictation_stop<R: Runtime>(app: &AppHandle<R>) {
+/// Called when recording stops: stop audio, run STT → cleanup → inject.
+fn on_vozr_stop<R: Runtime>(app: &AppHandle<R>) {
     let audio_state: tauri::State<'_, AudioState> = app.state();
 
     // Stop audio capture and take the buffer

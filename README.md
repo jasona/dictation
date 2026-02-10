@@ -1,4 +1,4 @@
-# Dictation
+# Vozr
 
 A desktop voice-to-text app that runs entirely on your machine. Press a hotkey, speak, and your words are transcribed and injected into whatever application has focus — Notepad, VS Code, Slack, your browser, anything.
 
@@ -93,7 +93,7 @@ On first launch, the onboarding wizard walks you through:
 1. **Microphone permission** — Grant access to your mic
 2. **Hotkey setup** — Choose your activation shortcut
 3. **Model download** — The `base.en` Whisper model (~150 MB) is downloaded automatically
-4. **Test dictation** — Try speaking to verify everything works
+4. **Test recording** — Try speaking to verify everything works
 
 After onboarding, the app lives in your **system tray**. Right-click the tray icon for Settings, Pause, or Quit.
 

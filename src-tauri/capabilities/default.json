@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capabilities for the dictation app",
+  "description": "Default capabilities for the Vozr app",
   "windows": ["main", "pill", "settings", "onboarding"],
   "permissions": [
     "core:default",

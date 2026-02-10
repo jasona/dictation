@@ -8,7 +8,7 @@ const CLEANUP_PROMPT: &str = "Clean up the following dictated text. Fix grammar 
 // ---- API key management via keyring ----
 
 fn keyring_service() -> &'static str {
-    "dictation-app"
+    "vozr"
 }
 
 fn key_name(provider: &CloudProvider) -> &'static str {

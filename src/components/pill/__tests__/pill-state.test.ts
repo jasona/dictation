@@ -17,8 +17,8 @@ import type { PillState } from "@/types";
 function nextState(
   current: PillState,
   event:
-    | "dictation://start"
-    | "dictation://stop"
+    | "vozr://start"
+    | "vozr://stop"
     | "pill://success"
     | "pill://error"
     | "audio://no-speech"
@@ -26,9 +26,9 @@ function nextState(
     | "auto-dismiss",
 ): PillState {
   switch (event) {
-    case "dictation://start":
+    case "vozr://start":
       return "recording";
-    case "dictation://stop":
+    case "vozr://stop":
       return "processing";
     case "pill://success":
       return "success";
@@ -51,11 +51,11 @@ describe("Pill state machine", () => {
   });
 
   it("transitions from idle to recording on start", () => {
-    expect(nextState("idle", "dictation://start")).toBe("recording");
+    expect(nextState("idle", "vozr://start")).toBe("recording");
   });
 
   it("transitions from recording to processing on stop", () => {
-    expect(nextState("recording", "dictation://stop")).toBe("processing");
+    expect(nextState("recording", "vozr://stop")).toBe("processing");
   });
 
   it("transitions from processing to success", () => {
@@ -84,9 +84,9 @@ describe("Pill state machine", () => {
   });
 
   it("recording can restart from any state", () => {
-    expect(nextState("error", "dictation://start")).toBe("recording");
-    expect(nextState("success", "dictation://start")).toBe("recording");
-    expect(nextState("noSpeech", "dictation://start")).toBe("recording");
+    expect(nextState("error", "vozr://start")).toBe("recording");
+    expect(nextState("success", "vozr://start")).toBe("recording");
+    expect(nextState("noSpeech", "vozr://start")).toBe("recording");
   });
 });
 

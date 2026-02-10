@@ -4,7 +4,7 @@ use std::fs;
 /// Create a unique temp dir per test to avoid parallel test interference.
 fn unique_dir(name: &str) -> PathBuf {
     let dir = std::env::temp_dir()
-        .join("dictation_test")
+        .join("vozr_test")
         .join(name);
     let _ = fs::remove_dir_all(&dir);
     let _ = fs::create_dir_all(&dir);

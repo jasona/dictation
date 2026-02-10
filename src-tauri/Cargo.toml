@@ -1,12 +1,12 @@
 [package]
-name = "dictation-app"
+name = "vozr"
 version = "0.1.0"
-description = "A cross-platform voice-to-text dictation app"
+description = "Local voice-to-text dictation — speak and it types"
 authors = ["you"]
 edition = "2021"
 
 [lib]
-name = "dictation_app_lib"
+name = "vozr_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

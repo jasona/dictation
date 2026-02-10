@@ -57,15 +57,15 @@ export function usePillState(): PillStateHook {
     const unlisteners: Array<() => void> = [];
 
     const setup = async () => {
-      // Dictation lifecycle events
+      // Vozr lifecycle events
       unlisteners.push(
-        await listen("dictation://start", () => {
+        await listen("vozr://start", () => {
           transitionTo("recording");
         }),
       );
 
       unlisteners.push(
-        await listen("dictation://stop", () => {
+        await listen("vozr://stop", () => {
           transitionTo("processing");
         }),
       );

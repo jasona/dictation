@@ -32,7 +32,7 @@ export default function TrayStep({ onFinish }: TrayStepProps) {
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
             <div className="flex h-5 w-5 items-center justify-center rounded bg-accent-primary">
-              <span className="text-[10px] font-bold text-white">D</span>
+              <span className="text-[10px] font-bold text-white">V</span>
             </div>
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
           </div>
@@ -52,7 +52,7 @@ export default function TrayStep({ onFinish }: TrayStepProps) {
         <span className="font-medium text-text-primary">
           {formatHotkey(hotkey)}
         </span>{" "}
-        anywhere to dictate. Look for the Dictation icon in your system tray.
+        anywhere to dictate. Look for the Vozr icon in your system tray.
       </p>
 
       <Button className="mt-8" size="lg" onClick={onFinish}>

@@ -17,10 +17,10 @@ pub enum TrayState {
 
 fn tooltip_for_state(state: TrayState) -> &'static str {
     match state {
-        TrayState::Idle => "Dictation — Idle",
-        TrayState::Listening => "Dictation — Recording...",
-        TrayState::Processing => "Dictation — Processing...",
-        TrayState::Error => "Dictation — Error",
+        TrayState::Idle => "Vozr — Idle",
+        TrayState::Listening => "Vozr — Recording...",
+        TrayState::Processing => "Vozr — Processing...",
+        TrayState::Error => "Vozr — Error",
     }
 }
 
@@ -28,7 +28,7 @@ fn tooltip_for_state(state: TrayState) -> &'static str {
 pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
     let settings_item = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
     let pause_item = MenuItem::with_id(app, "pause-resume", "Pause", true, None::<&str>)?;
-    let about_item = MenuItem::with_id(app, "about", "About Dictation", true, None::<&str>)?;
+    let about_item = MenuItem::with_id(app, "about", "About Vozr", true, None::<&str>)?;
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
 
     let menu = Menu::with_items(
@@ -39,7 +39,7 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
     let icon = Image::from_bytes(include_bytes!("../../icons/icon.png"))
         .expect("Failed to load tray icon");
 
-    let tray = TrayIconBuilder::with_id("dictation-tray")
+    let tray = TrayIconBuilder::with_id("vozr-tray")
         .icon(icon)
         .tooltip(tooltip_for_state(TrayState::Idle))
         .menu(&menu)
@@ -59,10 +59,10 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
                     let version = env!("CARGO_PKG_VERSION");
                     app.dialog()
                         .message(format!(
-                            "Dictation v{}\n\nLocal voice-to-text dictation.\nAll speech processing happens on your device.",
+                            "Vozr v{}\n\nLocal voice-to-text dictation.\nAll speech processing happens on your device.",
                             version
                         ))
-                        .title("About Dictation")
+                        .title("About Vozr")
                         .kind(MessageDialogKind::Info)
                         .blocking_show();
                 }
@@ -80,7 +80,7 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<TrayIcon<R>> {
 /// Update the tray tooltip to reflect current app state.
 /// TODO: Swap icon per state once distinct icon assets are designed.
 pub fn set_state<R: Runtime>(app: &AppHandle<R>, state: TrayState) {
-    if let Some(tray) = app.tray_by_id("dictation-tray") {
+    if let Some(tray) = app.tray_by_id("vozr-tray") {
         let _ = tray.set_tooltip(Some(tooltip_for_state(state)));
     }
 }

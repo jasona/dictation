@@ -26,10 +26,10 @@ export default function HotkeyStep({ onNext }: HotkeyStepProps) {
     invoke<string>("get_hotkey").then(setHotkey).catch(() => {});
   }, []);
 
-  // Listen for dictation start to detect hotkey press
+  // Listen for vozr start to detect hotkey press
   useEffect(() => {
     let unlisten: (() => void) | null = null;
-    listen("dictation://start", () => {
+    listen("vozr://start", () => {
       setPressed(true);
       // Auto-stop the recording since this is just a test
       invoke("set_is_paused", { paused: false }).catch(() => {});

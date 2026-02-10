@@ -66,13 +66,13 @@ export default function FirstDictationStep({
 
     const setup = async () => {
       unlisteners.push(
-        await listen("dictation://start", () => {
+        await listen("vozr://start", () => {
           setPhase("listening");
         }),
       );
 
       unlisteners.push(
-        await listen("dictation://stop", () => {
+        await listen("vozr://stop", () => {
           setPhase("processing");
         }),
       );
@@ -92,7 +92,7 @@ export default function FirstDictationStep({
     // Listen for the result from the pipeline
     let unlisten: (() => void) | null = null;
     listen<string>("pill://success", () => {
-      setTranscription("Your dictation will appear here in the real app!");
+      setTranscription("Your transcription will appear here in the real app!");
       setPhase("done");
     }).then((fn) => {
       unlisten = fn;
@@ -102,7 +102,7 @@ export default function FirstDictationStep({
     const timer = setTimeout(() => {
       if (phase === "processing") {
         setTranscription(
-          "Great! Your dictation pipeline is set up and ready to go.",
+          "Great! Vozr is set up and ready to go.",
         );
         setPhase("done");
       }
@@ -125,7 +125,7 @@ export default function FirstDictationStep({
       </div>
 
       <h2 className="text-[length:var(--font-size-heading-2)] font-semibold text-text-primary">
-        {phase === "done" ? "Nice!" : "Try your first dictation"}
+        {phase === "done" ? "Nice!" : "Try your first recording"}
       </h2>
 
       {/* Downloading model */}
