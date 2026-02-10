@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { MonitorSpeaker, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import vozrLogo from "@/assets/vozr-logo.png";
 
 interface TrayStepProps {
   onFinish: () => void;
@@ -31,9 +32,7 @@ export default function TrayStep({ onFinish }: TrayStepProps) {
           <div className="flex items-center gap-2">
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-accent-primary">
-              <span className="text-[10px] font-bold text-white">V</span>
-            </div>
+            <img src={vozrLogo} alt="Vozr" className="h-5 w-5 rounded" />
             <div className="h-4 w-4 rounded bg-text-tertiary/30" />
           </div>
         </div>

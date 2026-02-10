@@ -1,5 +1,5 @@
-import { Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import vozrLogo from "@/assets/vozr-logo.png";
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -8,9 +8,7 @@ interface WelcomeStepProps {
 export default function WelcomeStep({ onNext }: WelcomeStepProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-primary/15">
-        <Mic size={32} className="text-accent-primary" />
-      </div>
+      <img src={vozrLogo} alt="Vozr" className="mb-6 h-20 w-20" />
 
       <h1 className="text-[length:var(--font-size-heading-1)] font-semibold text-text-primary">
         Dictate anywhere on your computer
