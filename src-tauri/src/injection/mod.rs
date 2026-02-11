@@ -125,8 +125,10 @@ pub fn inject_text_impl(text: &str, state: &InjectionState) -> InjectionResult {
     }
 }
 
-/// Undo the last injection by simulating Ctrl+Z repeated for each character.
+/// Undo the last injection by simulating undo shortcut repeated for each character.
 fn undo_last_injection_impl(state: &InjectionState) -> Result<(), String> {
+    use clipboard::MODIFIER_KEY;
+
     let mut last = state.last_injection.lock().unwrap();
 
     let injection = last
@@ -146,18 +148,18 @@ fn undo_last_injection_impl(state: &InjectionState) -> Result<(), String> {
 
     for _ in 0..undo_count {
         enigo
-            .key(Key::Control, Direction::Press)
-            .map_err(|e| format!("Failed to press Ctrl: {}", e))?;
+            .key(MODIFIER_KEY, Direction::Press)
+            .map_err(|e| format!("Failed to press modifier: {}", e))?;
         enigo
             .key(Key::Unicode('z'), Direction::Click)
             .map_err(|e| format!("Failed to click Z: {}", e))?;
         enigo
-            .key(Key::Control, Direction::Release)
-            .map_err(|e| format!("Failed to release Ctrl: {}", e))?;
+            .key(MODIFIER_KEY, Direction::Release)
+            .map_err(|e| format!("Failed to release modifier: {}", e))?;
     }
 
     *last = None;
-    log::info!("Undid last injection ({} Ctrl+Z operations)", undo_count);
+    log::info!("Undid last injection ({} undo operations)", undo_count);
     Ok(())
 }
 

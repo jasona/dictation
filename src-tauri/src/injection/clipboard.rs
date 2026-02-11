@@ -77,11 +77,18 @@ pub fn restore_clipboard(saved: &SavedClipboard) {
     }
 }
 
-/// Inject text via clipboard paste (Ctrl+V).
+/// The modifier key used for paste/undo shortcuts.
+/// On macOS this is Cmd (Meta), on other platforms it's Ctrl.
+#[cfg(target_os = "macos")]
+pub const MODIFIER_KEY: Key = Key::Meta;
+#[cfg(not(target_os = "macos"))]
+pub const MODIFIER_KEY: Key = Key::Control;
+
+/// Inject text via clipboard paste (Ctrl+V / Cmd+V).
 ///
 /// 1. Save current clipboard
 /// 2. Set text to clipboard
-/// 3. Simulate Ctrl+V
+/// 3. Simulate paste shortcut
 /// 4. Restore original clipboard
 ///
 /// Total time target: <500ms
@@ -96,19 +103,19 @@ pub fn inject_via_clipboard(text: &str) -> Result<(), String> {
     // Let clipboard settle
     thread::sleep(Duration::from_millis(50));
 
-    // Simulate Ctrl+V
+    // Simulate paste (Ctrl+V on Windows/Linux, Cmd+V on macOS)
     let mut enigo = Enigo::new(&Settings::default())
         .map_err(|e| format!("Failed to create enigo instance: {}", e))?;
 
     enigo
-        .key(Key::Control, Direction::Press)
-        .map_err(|e| format!("Failed to press Ctrl: {}", e))?;
+        .key(MODIFIER_KEY, Direction::Press)
+        .map_err(|e| format!("Failed to press modifier: {}", e))?;
     enigo
         .key(Key::Unicode('v'), Direction::Click)
         .map_err(|e| format!("Failed to click V: {}", e))?;
     enigo
-        .key(Key::Control, Direction::Release)
-        .map_err(|e| format!("Failed to release Ctrl: {}", e))?;
+        .key(MODIFIER_KEY, Direction::Release)
+        .map_err(|e| format!("Failed to release modifier: {}", e))?;
 
     // Let paste complete
     thread::sleep(Duration::from_millis(150));

@@ -53,7 +53,7 @@ pub fn get_device(device_id: Option<&str>) -> Result<cpal::Device, String> {
         }
         None => host
             .default_input_device()
-            .ok_or_else(|| "No default input device available. Check your microphone connection and Windows sound settings.".to_string()),
+            .ok_or_else(|| "No default input device available. Check your microphone connection and system sound settings.".to_string()),
     }
 }
 
